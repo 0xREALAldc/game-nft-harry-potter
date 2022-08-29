@@ -12,6 +12,15 @@ const main = async () => {
   ); 
   await gameContract.deployed();
   console.log("Contract address: ", gameContract.address);
+
+  let txn;
+  // mint a NFT for the character in the index 2
+  txn = await gameContract.mintCharacterNFT(1);
+  await txn.wait();
+
+  // we retrieve the URI value from the NFT, we know its index 1 because here will always be the first one
+  let returnedTokenUri = await gameContract.tokenURI(1); //tokenURI is a inherited method from ERC721 that retrieves the NFT metadata
+  console.log("Token URI: ", returnedTokenUri);
 };
 
 const runMain = async () => {
