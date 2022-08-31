@@ -16,6 +16,9 @@ import "hardhat/console.sol";
 
 contract MyEpicGame is ERC721 {
 
+  event CharacterNFTMinted(address sender, uint256 tokenId, uint256 characterIndex);
+  event AttackComplete(uint256 newBossHp, uint256 newPlayerHp);
+
   struct CharacterAttributes {
     uint256 characterIndex;
     string name;
@@ -112,6 +115,8 @@ contract MyEpicGame is ERC721 {
 
     // increment the ID for the next mint
     _tokenIds.increment();
+
+    emit CharacterNFTMinted(msg.sender, newItemId, _characterIndex);
   }
 
   function tokenURI(uint256 _tokenId) public view override returns (string memory) {
@@ -170,5 +175,27 @@ contract MyEpicGame is ERC721 {
 
     console.log("Player has attacked Boss. Boss now has %s HP left", bigBoss.hp);
     console.log("Boss has attacked the player. Player now has %s HP left", player.hp);
+
+    emit AttackComplete(bigBoss.hp, player.hp);
+  }
+
+  function checkIfUserHasNFT() public view returns (CharacterAttributes memory) {
+    // we get the tokenId of player NFT
+    uint256 userNftTokenId = nftHolders[msg.sender];
+    // if we have in the hashmap, we return the NFT character
+    if (userNftTokenId > 0) {
+      return nftHolderAttributes[userNftTokenId];
+    } else { // otherwise, we return nothing
+      CharacterAttributes memory emptyStruct;
+      return emptyStruct;
+    }
+  }
+
+  function getAllDefaultCharacters() public view returns (CharacterAttributes[] memory) {
+    return defaultCharacters;
+  }
+
+  function getBigBoss() public view returns (BigBoss memory) {
+    return bigBoss;
   }
 }
