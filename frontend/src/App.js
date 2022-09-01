@@ -1,13 +1,15 @@
 import React, { useEffect, useState } from "react"
 import twitterLogo from "./assets/twitter-logo.svg"
 import "./App.css"
+import SelectCharacter from "./Components/SelectCharacter";
 
 // Constants
-const TWITTER_HANDLE = "REAL_aldc"
-const TWITTER_LINK = `https://twitter.com/${TWITTER_HANDLE}`
+const TWITTER_HANDLE = "REAL_aldc";
+const TWITTER_LINK = `https://twitter.com/${TWITTER_HANDLE}`;
 
 const App = () => {
   const [currentAccount, setCurrentAccount] = useState(null);
+  const [characterNFT, setCharacterNFT] = useState(null);
 
   // check if we have metamask
   const checkIfWalletIsConnected = async () => {
@@ -34,6 +36,29 @@ const App = () => {
       }
     } catch (error) {
       console.log("ERROR: %s", error);
+    }
+  };
+
+  // method to render the content dynamically
+  const renderContent = () => {
+    // first we check to see if the wallet is connected
+    if (!currentAccount) {
+      return (
+        <div className="connect-wallet-container">
+            <img
+              src="https://i.pinimg.com/originals/24/83/9c/24839c59c39c8c9795781d77fc884e6d.gif"
+              alt="Hogwarts Battle"
+            />
+
+            <button 
+              className="cta-button connect-wallet-button"
+              onClick={connectWalletAction}>
+                Connect Wallet
+            </button>
+          </div>
+      );
+    } else if (currentAccount && !characterNFT) {
+      return <SelectCharacter setCharacterNFT={setCharacterNFT} />;
     }
   };
 
@@ -67,17 +92,9 @@ const App = () => {
         <div className="header-container">
           <p className="header gradient-text">🪄 Wicked Wizards 🪄</p>
           <p className="sub-text">Join now in the battle agains the dark forces!</p>
-          <div className="connect-wallet-container">
-            <img
-              src="https://i.pinimg.com/originals/24/83/9c/24839c59c39c8c9795781d77fc884e6d.gif"
-              alt="Hogwarts Battle"
-            />
-            <button 
-              className="cta-button connect-wallet-button"
-              onClick={connectWalletAction}>
-                Connect Wallet
-            </button>
-          </div>
+          
+          {renderContent()}
+          
         </div>
         <div className="footer-container">
           <img alt="Twitter Logo" className="twitter-logo" src={twitterLogo} />
