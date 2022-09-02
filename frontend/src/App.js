@@ -1,7 +1,11 @@
 import React, { useEffect, useState } from "react"
 import twitterLogo from "./assets/twitter-logo.svg"
-import "./App.css"
+import { ethers } from 'ethers';  
+
+import "./App.css" 
 import SelectCharacter from "./Components/SelectCharacter";
+import { CONTRACT_ADDRESS, transformCharacterData } from "./constants";
+import myEpicGame from "./utils/MyEpicGame.json";
 
 // Constants
 const TWITTER_HANDLE = "REAL_aldc";
@@ -37,6 +41,16 @@ const App = () => {
     } catch (error) {
       console.log("ERROR: %s", error);
     }
+  };
+
+  const checkNetwork = async () => {
+    // try {
+    //   if (window.ethereum.networkVersion !== "5") {
+    //     alert("Please connect to Goerli!");
+    //   }
+    // } catch (error) {
+    //   console.log(error);
+    // }
   };
 
   // method to render the content dynamically
@@ -84,7 +98,36 @@ const App = () => {
 
   useEffect(() => {
     checkIfWalletIsConnected();
+    checkNetwork();
   }, []);
+
+  useEffect(() => {
+    const fetchNFTMetadata = async () => {
+      console.log("Checking if the address has a NFT needed for the game: ", currentAccount);
+
+      const provider = new ethers.providers.Web3Provider(window.ethereum);
+      const signer = provider.getSigner();
+      const gameContract = new ethers.Contract(
+        CONTRACT_ADDRESS,
+        myEpicGame.abi,
+        signer
+      );
+
+      const txn = await gameContract.checkIfUserHasNFT();
+      if (txn.name) {  //TODO later we can check here if HP > 0 to allow a person to mint a new NFT if the one he has is already DEAD
+        console.log("User has a NFT!", txn);
+        setCharacterNFT(transformCharacterData(txn));
+      } else {
+        console.log("User doesnt has a NFT!");
+      }
+    };
+
+    // we only run this if we have a wallet connected
+    if (currentAccount) {
+      console.log("Connected account: ", currentAccount);
+      fetchNFTMetadata();
+    }
+  }, [currentAccount]);
 
   return (
     <div className="App">
@@ -94,7 +137,7 @@ const App = () => {
           <p className="sub-text">Join now in the battle agains the dark forces!</p>
           
           {renderContent()}
-          
+
         </div>
         <div className="footer-container">
           <img alt="Twitter Logo" className="twitter-logo" src={twitterLogo} />
