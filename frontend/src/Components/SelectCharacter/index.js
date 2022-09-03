@@ -4,9 +4,12 @@ import { ethers } from 'ethers';
 import { CONTRACT_ADDRESS, transformCharacterData } from '../../constants';
 import myEpicGame from '../../utils/MyEpicGame.json';
 
+import LoadingIndicator from '../LoadingIndicator';
+
 const SelectCharacter = ({ setCharacterNFT }) => {
   const [characters, setCharacters] = useState([]);
   const [gameContract, setGameContract] = useState(null);
+  const [mintingCharacter, setMintingCharacter] = useState(false);
 
   useEffect(() => {
     const { ethereum } = window;
@@ -53,7 +56,7 @@ const SelectCharacter = ({ setCharacterNFT }) => {
         setCharacterNFT(transformCharacterData(characterNFT));
 
         alert(
-          `Your NFT is minted -- check here: https://testnets.opensea.io/assets/${gameContract}/${tokenId.toNumber()}`
+          `Your NFT is minted -- check here: https://testnets.opensea.io/assets/${gameContract.address}/${tokenId.toNumber()}`
         );
       }
     };
@@ -93,14 +96,20 @@ const SelectCharacter = ({ setCharacterNFT }) => {
   const mintCharacterNFTAction = (characterId) => async () => {
     try {
       if (gameContract) {
+
+        setMintingCharacter(true);
         console.log("Minting character...");
 
         const mintTxn = await gameContract.mintCharacterNFT(characterId);
         await mintTxn.wait();
         console.log("mintTxn: ", mintTxn);
+
+        setMintingCharacter(false);
       }
     } catch (error) {
       console.warn("MintCharacterActionError: ", error);
+
+      setMintingCharacter(false);
     }
   };
 
@@ -109,6 +118,19 @@ const SelectCharacter = ({ setCharacterNFT }) => {
       <h2>Mint your hero</h2>
       {characters.length > 0 && (
         <div className="character-grid">{renderCharacters()}</div>
+      )}
+
+      {mintingCharacter && (
+        <div className="loading">
+          <div className="indicator">
+            <LoadingIndicator />
+            <p>Minting NFT...</p>
+          </div>
+          <img 
+            src="https://universosemum.com.br/wp-content/uploads/2021/11/giphy-88.gif"
+            alt="Minting gif"
+          />
+        </div>
       )}
     </div>
   );

@@ -4,6 +4,9 @@ import { ethers } from 'ethers';
 
 import "./App.css" 
 import SelectCharacter from "./Components/SelectCharacter";
+import LoadingIndicator from './Components/LoadingIndicator';
+import Arena from './Components/Arena';
+
 import { CONTRACT_ADDRESS, transformCharacterData } from "./constants";
 import myEpicGame from "./utils/MyEpicGame.json";
 
@@ -14,6 +17,7 @@ const TWITTER_LINK = `https://twitter.com/${TWITTER_HANDLE}`;
 const App = () => {
   const [currentAccount, setCurrentAccount] = useState(null);
   const [characterNFT, setCharacterNFT] = useState(null);
+  const [isLoading, setIsLoading] = useState(false);
 
   // check if we have metamask
   const checkIfWalletIsConnected = async () => {
@@ -22,6 +26,8 @@ const App = () => {
 
       if (!ethereum) {
         console.log("You need metamask extension to connect!");
+
+        setIsLoading(false);
         return;
       } else {
         console.log("We have metamask!");
@@ -41,6 +47,8 @@ const App = () => {
     } catch (error) {
       console.log("ERROR: %s", error);
     }
+
+    setIsLoading(false);
   };
 
   const checkNetwork = async () => {
@@ -55,6 +63,10 @@ const App = () => {
 
   // method to render the content dynamically
   const renderContent = () => {
+    if (isLoading) {
+      return <LoadingIndicator />;
+    }
+
     // first we check to see if the wallet is connected
     if (!currentAccount) {
       return (
@@ -73,6 +85,8 @@ const App = () => {
       );
     } else if (currentAccount && !characterNFT) {
       return <SelectCharacter setCharacterNFT={setCharacterNFT} />;
+    } else if (currentAccount && characterNFT) {
+      return <Arena characterNFT={characterNFT} setCharacterNFT={setCharacterNFT}/>
     }
   };
 
@@ -97,6 +111,8 @@ const App = () => {
   };
 
   useEffect(() => {
+    setIsLoading(true);
+
     checkIfWalletIsConnected();
     checkNetwork();
   }, []);
@@ -114,13 +130,16 @@ const App = () => {
       );
 
       const txn = await gameContract.checkIfUserHasNFT();
-      if (txn.name) {  //TODO later we can check here if HP > 0 to allow a person to mint a new NFT if the one he has is already DEAD
+      //if (txn.name) {  //TODO later we can check here if HP > 0 to allow a person to mint a new NFT if the one he has is already DEAD
+      if (txn.hp > 0) {
         console.log("User has a NFT!", txn);
         setCharacterNFT(transformCharacterData(txn));
       } else {
         console.log("User doesnt has a NFT!");
       }
     };
+
+    setIsLoading(false);
 
     // we only run this if we have a wallet connected
     if (currentAccount) {
