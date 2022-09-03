@@ -10,7 +10,7 @@ const main = async () => {
     [480, 670, 505], //hp 
     [195, 239, 210], //attack damage 
     "Voldemort",
-    "https://j2w3g2y3.rocketcdn.me/wp-content/uploads/2018/08/PS4Wallpapers.com_5a8088bda1c23_thumb-1920-676915-1600x800.jpg",
+    "https://i.pinimg.com/736x/ff/bf/1e/ffbf1e32781a6f7714fc17e70d3cef37.jpg",
     1910,
     390
   ); 
