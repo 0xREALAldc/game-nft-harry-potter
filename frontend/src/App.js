@@ -72,7 +72,7 @@ const App = () => {
       return (
         <div className="connect-wallet-container">
             <img
-              src="https://i.pinimg.com/originals/24/83/9c/24839c59c39c8c9795781d77fc884e6d.gif"
+              src="https://cloudflare-ipfs.com/ipfs/QmbdL8nmP97Mmoqp9NdJmYYLiaQBJBLeL8AAskFVsCqxuQ"
               alt="Hogwarts Battle"
             />
 

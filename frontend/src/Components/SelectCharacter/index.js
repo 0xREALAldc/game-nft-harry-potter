@@ -83,7 +83,9 @@ const SelectCharacter = ({ setCharacterNFT }) => {
         <p>{character.name}</p>
       </div>
 
-      <img src={character.imageURI} alt={character.name} />
+      <img 
+        src={`https://cloudflare-ipfs.com/ipfs/${character.imageURI}`}
+        alt={character.name} />
       <button 
         type="button"
         className="character-mint-button"
@@ -127,7 +129,7 @@ const SelectCharacter = ({ setCharacterNFT }) => {
             <p>Minting NFT...</p>
           </div>
           <img 
-            src="https://universosemum.com.br/wp-content/uploads/2021/11/giphy-88.gif"
+            src="https://cloudflare-ipfs.com/ipfs/QmbPCfk55W738jXGoRaSMfUt3DjhNJJQECDQzphApWtFSj"
             alt="Minting gif"
           />
         </div>
