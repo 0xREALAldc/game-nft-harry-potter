@@ -132,7 +132,8 @@ contract MyEpicGame is ERC721 {
         charAttributes.name,
         ' -- NFT #: ',
         Strings.toString(_tokenId),
-        '", "description": "This is a NFT that gives you access to the Wicked Wizards game. Enjoy!", "image": "',
+        // '", "description": "This is a NFT that gives you access to the Wicked Wizards game. Enjoy!", "image": "',
+        '", "description": "This is a NFT that gives you access to the Wicked Wizards game. Enjoy!", "image": "ipfs://',
         charAttributes.imageURI,
         '", "attributes": [ { "trait_type": "Health Points", "value":', strHp, ', "max_value":', strMaxHp,'}, { "trait_type": "Attack Damage", "value": ',
         strAttackDamage, '} ]}'
